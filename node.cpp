@@ -14,27 +14,32 @@ Node::Node(int inputValue){
 Node::~Node(){}
 
 //Get right node
-Node* getRight(){
+Node* Node::getRight(){
 	return right;
 }
 
 //Get left node
-Node* getLeft(){
+Node* Node::getLeft(){
 	return left;
 }
 
 //Set right node
-void setRight(Node* inputRight){
+void Node::setRight(Node* inputRight){
 	right = inputRight;
 }
 
 //Set left node
-void setLeft(Node* inputLeft){
+void Node::setLeft(Node* inputLeft){
 	left = inputLeft;
 }
 
 //Get value
-int getValue(){
+int Node::getValue(){
 	return value;
+}
+
+//Set value
+void Node::setValue(int newVal){
+	value = newVal;
 }
 

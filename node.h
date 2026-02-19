@@ -17,6 +17,7 @@ class Node{
 		void setRight(Node*);
 		void setLeft(Node*);
 		int getValue();
+		void setValue(int);
 	//private variables
 	private:
 		int value;

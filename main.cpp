@@ -3,15 +3,16 @@
 #include "node.h"
 using namespace std;
 
-void add(int value, Node** treeArray);
-void Delete(Node** treeArray);
-void DeleteAll(Node** treeArray);
+void addNode(int value, Node** treeArray);
+void printTree(Node** treeArray);
+//void Delete(Node** treeArray);
+//void DeleteAll(Node** treeArray);
 
 int main(){
 
 	//Basic var instantiation
 	char command[1000];
-	Node* tree[101] = new Node*[101];
+	Node** tree = new Node*[101];
 	bool runProgram = true;
 	for (int i = 0; i <= 101;i++){
 		tree[i] = nullptr;
@@ -36,10 +37,15 @@ int main(){
 			cout << "Deletes everything" << endl;
 		}
 		else if (strcmp(command, add) == 0){
-			cout << "Adds node" << endl;
+			cout << "Value (-1 last val to terminate): " << endl;
+			int addedValue;
+			while (cin >> addedValue and addedValue != -1){
+				addNode(addedValue,tree);
+				printTree(tree);
+			}
 		}
 		else if (strcmp(command, quit) == 0){
-			cout << "Quitting..." << end;
+			cout << "Quitting..." << endl;
 			runProgram = false;
 		}
 		else{
@@ -50,24 +56,45 @@ int main(){
 	return 0;
 }
 
-void add(int value, Node** treeArray){
+void addNode(int value, Node** treeArray){
 	Node *newNode = new Node(value);
-	//root case
-	if (treeArray[1] == nullptr){
-		treeArray[1] = newNode;
+	int searchIndex = 1;
+	//Adds to next avaliable index
+	if (treeArray[searchIndex] == nullptr){
+		treeArray[searchIndex] = newNode;
 	}
 	else{
-		//Fix this logic so that is searches correctly
-		int searchIndex = 1;
 		while (treeArray[searchIndex] != nullptr){
 			searchIndex = (searchIndex*2)+1;
-			int numOfreps = (searchIndex / 2);
-			
-			while (treeArray[searchIndex] != nullptr and numOfreps >= 0){
-				searchIndex--;
-				numOfreps--;
+			int numOfreps = searchIndex / 2;
+			for (int i = numOfreps; i > 0;i--){
+				if (treeArray[searchIndex] != nullptr){
+					searchIndex--;
+				}
+				else{
+					break;
+				}
 			}
+			if (treeArray[searchIndex] != nullptr){
+				searchIndex += numOfreps;
+			}
+			
 		}
 		treeArray[searchIndex] = newNode;
+	}
+
+	//Sorts the newly added node
+	while (searchIndex != 1 and value > treeArray[searchIndex / 2]->getValue()){
+		int parentVal = treeArray[searchIndex / 2]->getValue();
+		treeArray[searchIndex]->setValue(parentVal);
+		treeArray[searchIndex / 2]->setValue(value);
+		searchIndex /= 2;
+	}
+}
+void printTree(Node** treeArray){
+	for (int i = 0; i < 101;i++){
+		if (treeArray[i] != nullptr){
+			cout << i << " : " << treeArray[i]->getValue() << endl;
+		}
 	}
 }
