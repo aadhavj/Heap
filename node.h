@@ -12,17 +12,11 @@ class Node{
 	public:
 		Node(int);
 		~Node();
-		Node* getRight();
-		Node* getLeft();
-		void setRight(Node*);
-		void setLeft(Node*);
 		int getValue();
 		void setValue(int);
 	//private variables
 	private:
 		int value;
-		Node* right;
-		Node* left;
 };
 //end of header guard
 #endif

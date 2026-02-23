@@ -1,10 +1,12 @@
 #include <iostream>
 #include <cstring>
+#include <fstream>
 #include "node.h"
 using namespace std;
 
 void addNode(int value, Node** treeArray);
-void printTree(Node** treeArray);
+void printTree(Node** treeArray, int lastIndex, int currentIndex, int depth);
+int findLastIndex(Node** treeArray);
 //void Delete(Node** treeArray);
 //void DeleteAll(Node** treeArray);
 
@@ -22,10 +24,12 @@ int main(){
 	char del[] = "DELETE";
 	char delAll[] = "DELETEALL";
 	char add[] = "ADD";
+	char addF[] = "ADDF";
+	char display[] = "PRINT";
 	char quit[] = "QUIT";
 
 	while (runProgram){
-		cout << "\nEnter Command(DELETE, DELETEALL, ADD, QUIT): ";
+		cout << "\nEnter Command(DELETE, DELETEALL, ADD, PRINT, ADDF, QUIT): ";
 		cin >> command;
 		command[9] = '\0';
 
@@ -37,16 +41,36 @@ int main(){
 			cout << "Deletes everything" << endl;
 		}
 		else if (strcmp(command, add) == 0){
-			cout << "Value (-1 last val to terminate): " << endl;
+			cout << "Value: " << endl;
 			int addedValue;
-			while (cin >> addedValue and addedValue != -1){
-				addNode(addedValue,tree);
-				printTree(tree);
+			cin >> addedValue;
+			addNode(addedValue, tree);
+		}
+		else if (strcmp(command, addF) == 0){
+
+			char fileName[100];
+			cout << "Enter file name (include .txt): ";
+			cin >> fileName;
+
+			ifstream numFile(fileName);
+
+			if (!numFile) {
+				cout << "Invalid file name." << endl;
+			}
+			else{
+				int number;
+				while (numFile >> number) {
+					addNode(number, tree);
+				}
+				numFile.close();
 			}
 		}
 		else if (strcmp(command, quit) == 0){
 			cout << "Quitting..." << endl;
 			runProgram = false;
+		}
+		else if (strcmp(command, display) == 0){
+			printTree(tree, findLastIndex(tree),1,0);
 		}
 		else{
 			cout << "Command prompt unrecognized" << endl;
@@ -64,21 +88,9 @@ void addNode(int value, Node** treeArray){
 		treeArray[searchIndex] = newNode;
 	}
 	else{
+		searchIndex = 1;
 		while (treeArray[searchIndex] != nullptr){
-			searchIndex = (searchIndex*2)+1;
-			int numOfreps = searchIndex / 2;
-			for (int i = numOfreps; i > 0;i--){
-				if (treeArray[searchIndex] != nullptr){
-					searchIndex--;
-				}
-				else{
-					break;
-				}
-			}
-			if (treeArray[searchIndex] != nullptr){
-				searchIndex += numOfreps;
-			}
-			
+			searchIndex++;
 		}
 		treeArray[searchIndex] = newNode;
 	}
@@ -91,10 +103,24 @@ void addNode(int value, Node** treeArray){
 		searchIndex /= 2;
 	}
 }
-void printTree(Node** treeArray){
-	for (int i = 0; i < 101;i++){
-		if (treeArray[i] != nullptr){
-			cout << i << " : " << treeArray[i]->getValue() << endl;
-		}
+void printTree(Node** treeArray, int lastIndex, int currentIndex, int depth){
+	if ((currentIndex *2) + 1 < lastIndex){
+		printTree(treeArray, lastIndex, (currentIndex*2)+1, depth+1);
 	}
+	for (int i = 0;i<depth;i++){
+		cout << "\t";
+	}
+	if (treeArray[currentIndex] != nullptr){
+		cout << treeArray[currentIndex]->getValue() << endl;
+	}
+	if ((currentIndex*2) < lastIndex){
+		printTree(treeArray, lastIndex, currentIndex*2, depth+1);
+	}
+}
+int findLastIndex(Node** treeArray){
+	int lastIndex = 1;
+	while (lastIndex < 101 and treeArray[lastIndex] != nullptr){
+		lastIndex++;
+	}
+	return lastIndex;
 }
