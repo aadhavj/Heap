@@ -8,7 +8,7 @@ void addNode(int value, Node** treeArray);
 void printTree(Node** treeArray, int lastIndex, int currentIndex, int depth);
 int findLastIndex(Node** treeArray);
 void swap(Node** treeArray, int firstIndex, int secondIndex);
-void Delete(Node** treeArray);
+void Delete(Node** treeArray, int searchIndex);
 void DeleteAll(Node** treeArray);
 
 int main(){
@@ -36,7 +36,30 @@ int main(){
 
 		//Command recognition
 		if (strcmp(command, del) == 0){
-			Delete(tree);
+			if (tree[1] != nullptr){
+				//outputs root to standard output
+				cout << tree[1]->getValue();
+
+				//deletes unneccessary allocated memory
+				delete tree[1];
+
+				//Find length of array, just counting non-null pointers
+				int lastIndex = findLastIndex(tree);
+			
+				//Not root
+				if (lastIndex != 1){
+					tree[1] = tree[lastIndex-1];
+					tree[lastIndex-1] = nullptr;
+					Delete(tree, 1);
+				}
+				else{
+					tree[1] = nullptr;
+				}
+			}
+			else{
+				cout << "Nothing to delete" << endl;
+			}
+
 		}
 		else if (strcmp(command, delAll) == 0){
 			DeleteAll(tree);
@@ -79,7 +102,9 @@ int main(){
 	}
 
 	//Cleans up all remaining node objects
-	DeleteAll(tree);
+	for (int i = 0;i<101;i++){
+		delete tree[i];
+	}
 
 	return 0;
 }
@@ -133,58 +158,49 @@ void swap(Node** treeArray, int firstIndex, int secondIndex){
 	treeArray[firstIndex] = treeArray[secondIndex];
 	treeArray[secondIndex] = temp;
 }
-void Delete(Node** treeArray){
-	if (treeArray[1] != nullptr){
-	//outputs root to standard output
-	cout << treeArray[1]->getValue();
-
-	//deletes unneccessary allocated memory
-	delete treeArray[1];
-
-	//Find length of array, just counting non-null pointers
-	int lastIndex = findLastIndex(treeArray);
-	//If not root
-	if (lastIndex != 1){
-		treeArray[1] = treeArray[lastIndex-1];
-		treeArray[lastIndex-1] = nullptr;
-		int searchIndex = 1;
-		bool swapsCompleted = false;
-		while (!swapsCompleted){
-			Node* left = treeArray[searchIndex*2];
-			Node* right = treeArray[(searchIndex*2)+1];
-			if (left != nullptr){
-				if (right == nullptr){
-					if (left->getValue() > treeArray[searchIndex]->getValue()){
-						swap(treeArray, searchIndex, searchIndex*2);
-					}
-					swapsCompleted = true;
+void Delete(Node** treeArray, int searchIndex){
+	Node* left = treeArray[searchIndex*2];
+	Node* right = treeArray[(searchIndex*2)+1];
+	if (left != nullptr){
+		if (right == nullptr){
+			if (left->getValue() > treeArray[searchIndex]->getValue()){
+				swap(treeArray, searchIndex, searchIndex*2);
+			}
+		}
+		else{
+			if (left->getValue() > treeArray[searchIndex]->getValue() or right->getValue() > treeArray[searchIndex]->getValue()){
+				if (left->getValue() > right->getValue()){
+					swap(treeArray, searchIndex, searchIndex*2);
+					Delete(treeArray, searchIndex*2);
 				}
 				else{
-					if (left->getValue() > treeArray[searchIndex]->getValue() or right->getValue() > treeArray[searchIndex]->getValue()){
-						if (left->getValue() > right->getValue()){
-							swap(treeArray, searchIndex, searchIndex*2);
-							searchIndex = searchIndex*2;
-						}
-						else{
-							swap(treeArray, searchIndex, (searchIndex*2)+1);
-							searchIndex = (searchIndex*2)+1;
-						}
-					}
+					swap(treeArray, searchIndex, (searchIndex*2)+1);
+					Delete(treeArray, (searchIndex*2)+1);
 				}
-			}
-			else{
-				swapsCompleted = true;
 			}
 		}
 	}
-	else{
-		treeArray[1] = nullptr;
-	}}
 }
 void DeleteAll(Node** treeArray){
 	while (treeArray[1] != nullptr){
-		Delete(treeArray);
-		cout << " ";
+		//outputs root to standard output
+		cout << treeArray[1]->getValue() << " ";
+
+		//deletes unneccessary allocated memory
+		delete treeArray[1];
+
+		//Find length of array, just counting non-null pointers
+		int lastIndex = findLastIndex(treeArray);
+
+		//Not root
+		if (lastIndex != 1){
+			treeArray[1] = treeArray[lastIndex-1];
+			treeArray[lastIndex-1] = nullptr;
+			Delete(treeArray, 1);
+		}
+		else{
+			treeArray[1] = nullptr;
+		}
 	}
 }
 
