@@ -1,9 +1,11 @@
+//Include modules
 #include <iostream>
 #include <cstring>
 #include <fstream>
 #include "node.h"
 using namespace std;
 
+//Function prototypes
 void addNode(int value, Node** treeArray);
 void printTree(Node** treeArray, int lastIndex, int currentIndex, int depth);
 int findLastIndex(Node** treeArray);
@@ -61,15 +63,18 @@ int main(){
 			}
 
 		}
+		//Deletes all nodes in tree
 		else if (strcmp(command, delAll) == 0){
 			DeleteAll(tree);
 		}
+		//Adds individual node
 		else if (strcmp(command, add) == 0){
 			cout << "Value: " << endl;
 			int addedValue;
 			cin >> addedValue;
 			addNode(addedValue, tree);
 		}
+		//Adds input from formatted file
 		else if (strcmp(command, addF) == 0){
 
 			char fileName[100];
@@ -89,13 +94,16 @@ int main(){
 				numFile.close();
 			}
 		}
+		//Quits out of loop
 		else if (strcmp(command, quit) == 0){
 			cout << "Quitting..." << endl;
 			runProgram = false;
 		}
+		//Prints the tree
 		else if (strcmp(command, display) == 0){
 			printTree(tree, findLastIndex(tree),1,0);
 		}
+		//Occurs for invalid command prompts
 		else{
 			cout << "Command prompt unrecognized" << endl;
 		}
@@ -109,6 +117,7 @@ int main(){
 	return 0;
 }
 
+//Adds node and sorts it into array
 void addNode(int value, Node** treeArray){
 	Node *newNode = new Node(value);
 	int searchIndex = 1;
@@ -132,6 +141,7 @@ void addNode(int value, Node** treeArray){
 		searchIndex /= 2;
 	}
 }
+//Print function -> credit to Mr. Galbraith for the code
 void printTree(Node** treeArray, int lastIndex, int currentIndex, int depth){
 	if ((currentIndex *2) + 1 < lastIndex){
 		printTree(treeArray, lastIndex, (currentIndex*2)+1, depth+1);
@@ -146,6 +156,7 @@ void printTree(Node** treeArray, int lastIndex, int currentIndex, int depth){
 		printTree(treeArray, lastIndex, currentIndex*2, depth+1);
 	}
 }
+//Finds the last index in the tree array
 int findLastIndex(Node** treeArray){
 	int lastIndex = 1;
 	while (lastIndex < 101 and treeArray[lastIndex] != nullptr){
@@ -153,14 +164,20 @@ int findLastIndex(Node** treeArray){
 	}
 	return lastIndex;
 }
+//Swaps two nodes given index location in treeArray
 void swap(Node** treeArray, int firstIndex, int secondIndex){
 	Node* temp = treeArray[firstIndex];
 	treeArray[firstIndex] = treeArray[secondIndex];
 	treeArray[secondIndex] = temp;
 }
+//Deletes root and resorts array
 void Delete(Node** treeArray, int searchIndex){
+
+	//Left and right nodes
 	Node* left = treeArray[searchIndex*2];
 	Node* right = treeArray[(searchIndex*2)+1];
+
+	//Does each case and swaps neccessary nodes, and recursively calls Delete
 	if (left != nullptr){
 		if (right == nullptr){
 			if (left->getValue() > treeArray[searchIndex]->getValue()){
@@ -181,6 +198,7 @@ void Delete(Node** treeArray, int searchIndex){
 		}
 	}
 }
+//Deletes all nodes
 void DeleteAll(Node** treeArray){
 	while (treeArray[1] != nullptr){
 		//outputs root to standard output
